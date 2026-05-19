@@ -28,13 +28,18 @@ beginBtn.addEventListener("click", () => {
    MIST SETUP
 ========================= */
 
-function resizeCanvas() {
+function resizeCanvas(){
+
     canvas.width = windowContainer.offsetWidth;
     canvas.height = windowContainer.offsetHeight;
 
-    ctx.fillStyle = "rgba(220,220,220,.92)";
+    /* FULL fog */
+    ctx.globalCompositeOperation = "source-over";
+
+    ctx.fillStyle = "rgba(200,200,200,0.95)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    /* switch to erasing mode */
     ctx.globalCompositeOperation = "destination-out";
 }
 
@@ -96,7 +101,7 @@ function checkMistProgress() {
     const totalPixels = canvas.width * canvas.height;
     const progress = transparentPixels / totalPixels;
 
-    if (progress > 0.88 && phase === 1) {
+    if (progress > 0.97 && phase === 1) {
         phase = 2;
 
         windowContainer.style.transition = "opacity 2s ease";

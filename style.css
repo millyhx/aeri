@@ -98,35 +98,51 @@ body {
    WINDOW + MIST
 ========================= */
 
-#windowContainer {
-    position: absolute;
-
-    width: 320px;
-    height: 420px;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    z-index: 5;
+#windowContainer{
+    position:absolute;
+    width:320px;
+    height:420px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    z-index:5;
 }
 
-#windowFrame {
-    width: 100%;
-    height: 100%;
-
-    position: absolute;
-    z-index: 10;
-
-    pointer-events: none;
+#windowFrame{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
 }
 
-#mist {
-    position: absolute;
-    inset: 0;
+/* window panes */
+    #windowFrame::before,
+    #windowFrame::after{
+    content:"";
+    position:absolute;
+    background:rgba(255,255,255,0.2);
+}
 
-    z-index: 8;
+/* vertical bar */
+#windowFrame::before{
+    width:6px;
+    height:100%;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+/* horizontal bar */
+#windowFrame::after{
+    height:6px;
+    width:100%;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+#mist{
+    position:absolute;
+    inset:0;
+    z-index:3;
 }
 
 /* =========================
