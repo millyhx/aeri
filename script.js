@@ -17,7 +17,7 @@ document.getElementById(
 );
 
 let phase=1;
-let wipeCount=0;
+let checkProgressTimer;
 
 /* modal */
 
@@ -32,24 +32,14 @@ modal.style.display="none";
 
 function resizeCanvas(){
 
-canvas.width=
-windowContainer.offsetWidth;
+canvas.width = windowContainer.offsetWidth;
+canvas.height = windowContainer.offsetHeight;
 
-canvas.height=
-windowContainer.offsetHeight;
+ctx.fillStyle = "rgba(220,220,220,.92)";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-ctx.fillStyle=
-"rgba(220,220,220,.9)";
+ctx.globalCompositeOperation = "destination-out";
 
-ctx.fillRect(
-0,
-0,
-canvas.width,
-canvas.height
-);
-
-ctx.globalCompositeOperation=
-"destination-out";
 }
 
 resizeCanvas();
@@ -76,44 +66,78 @@ canvas.addEventListener(
 "pointermove",
 (e)=>{
 
-if(!wiping || phase!==1)
-return;
+    if(!wiping || phase!==1)
+    return;
 
-const rect=
-canvas.getBoundingClientRect();
+    const rect =
+    canvas.getBoundingClientRect();
 
-const x=
-e.clientX-rect.left;
+    const x =
+    e.clientX - rect.left;
 
-const y=
-e.clientY-rect.top;
+    const y =
+    e.clientY - rect.top;
 
-ctx.beginPath();
+    ctx.beginPath();
+    ctx.arc(x, y, 40, 0, Math.PI * 2);
+    ctx.fill();
 
-ctx.arc(
-x,
-y,
-35,
-0,
-Math.PI*2
+    checkMistProgress();
+
+    }
 );
 
-ctx.fill();
+function checkMistProgress(){
 
-wipeCount++;
+const imageData =
+ctx.getImageData(
+0,
+0,
+canvas.width,
+canvas.height
+);
 
-if(wipeCount>100){
+const data = imageData.data;
 
-phase=2;
+let transparentPixels = 0;
 
-windowContainer.style.display=
-"none";
+/* every pixel = 4 values (RGBA) */
+for(let i = 0; i < data.length; i += 4){
 
-message.textContent=
-"Tap to create stars";
+const alpha = data[i + 3];
+
+if(alpha < 10){
+transparentPixels++;
 }
 
-});
+}
+
+const totalPixels =
+canvas.width * canvas.height;
+
+const progress =
+transparentPixels / totalPixels;
+
+/* debug if needed */
+// console.log(progress);
+
+if(progress > 0.88 && phase === 1){
+
+    phase = 2;
+
+    windowContainer.style.transition =
+    "opacity 2s ease";
+
+    windowContainer.style.opacity = 0;
+
+    setTimeout(() => {
+    windowContainer.style.display = "none";
+    }, 2000);
+
+    message.textContent =
+    "Tap to create stars";
+    }
+}
 
 /* phase 2 */
 
