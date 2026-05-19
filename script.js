@@ -15,6 +15,7 @@ const windowContainer = document.getElementById("windowContainer");
 
 let phase = 1;
 let checkProgressTimer;
+let stableFrames = 0;
 
 /* =========================
    MODAL
@@ -93,7 +94,7 @@ function checkMistProgress() {
     for (let i = 0; i < data.length; i += 4) {
         const alpha = data[i + 3];
 
-        if (alpha < 10) {
+        if (alpha <= 5) {
             transparentPixels++;
         }
     }
@@ -101,17 +102,23 @@ function checkMistProgress() {
     const totalPixels = canvas.width * canvas.height;
     const progress = transparentPixels / totalPixels;
 
-    if (progress > 0.97 && phase === 1) {
-        phase = 2;
+    if (progress > 0.97) {
+        stableFrames++;
 
-        windowContainer.style.transition = "opacity 2s ease";
-        windowContainer.style.opacity = 0;
+        if (stableFrames > 3 && phase === 1){
+            phase = 2;
 
-        setTimeout(() => {
-            windowContainer.style.display = "none";
-        }, 2000);
+            windowContainer.style.transition = "opacity 2s ease";
+            windowContainer.style.opacity = 0;
 
-        message.textContent = "Tap to create stars";
+            setTimeout(() => {
+                windowContainer.style.display = "none";
+            }, 2000);
+
+            message.textContent = "Tap to create stars";
+        }
+    } else {
+        stableFrames = 0;
     }
 }
 
